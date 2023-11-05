@@ -8,13 +8,24 @@ const GroceryListApp = () => {
   const [currentItem, setCurrentItem] = useState('');
   const [currentDescription, setCurrentDescription] = useState('');
   const [editIndex, setEditIndex] = useState(null);
+  const [photos, setPhotos] = useState([]);
 
   const handleAddItem = () => {
     if (editIndex !== null) {
-      groceries[editIndex] = { name: currentItem, description: currentDescription };
+      groceries[editIndex] = {
+        name: currentItem,
+        description: currentDescription,
+        photo: photos[editIndex] || null,
+      };
       setEditIndex(null);
+      setPhotos((prevPhotos) => {
+        const updatedPhotos = [...prevPhotos];
+        updatedPhotos[editIndex] = null;
+        return updatedPhotos;
+      });
     } else {
-      setGroceries([...groceries, { name: currentItem, description: currentDescription }]);
+      setGroceries([...groceries, { name: currentItem, description: currentDescription, photo: null }]);
+      setPhotos([...photos, null]);
     }
     setCurrentItem('');
     setCurrentDescription('');
@@ -24,6 +35,9 @@ const GroceryListApp = () => {
     const doneItem = groceries[index];
     setDoneItems([...doneItems, doneItem]);
     setGroceries(groceries.filter((_, i) => i !== index));
+    const updatedPhotos = [...photos];
+    updatedPhotos.splice(index, 1);
+    setPhotos(updatedPhotos);
   };
 
   const handleEdit = (index) => {
@@ -35,6 +49,18 @@ const GroceryListApp = () => {
 
   const handleDelete = (index) => {
     setGroceries(groceries.filter((_, i) => i !== index));
+    const updatedPhotos = [...photos];
+    updatedPhotos.splice(index, 1);
+    setPhotos(updatedPhotos);
+  };
+
+  const handlePhotoUpload = (index, event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const updatedPhotos = [...photos];
+      updatedPhotos[index] = URL.createObjectURL(file);
+      setPhotos(updatedPhotos);
+    }
   };
 
   return (
@@ -60,16 +86,18 @@ const GroceryListApp = () => {
         </button>
       </div>
 
-      <div class='container'>
-        <div class='grocery-list'>
+      <div className='container'>
+        <div className='grocery-list'>
           <GroceryList
             items={groceries}
             onMarkDone={handleMarkDone}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onPhotoUpload={handlePhotoUpload}
+            editIndex={editIndex}
           />
         </div>
-        <div class='done-list'>
+        <div className='done-list'>
           <DoneList items={doneItems} />
         </div>
       </div>
