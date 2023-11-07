@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Introduction from './components/Intoduction';
+import React, {useState} from 'react';
+import Introduction from './components/Introduction';
 import GroceryListApp from './components/GroceryListApp';
 import '../src/App.css';
 
