@@ -8,10 +8,10 @@ function App() {
 
   return (
     <div className="App">
-      {!started ? (
-        <Introduction onStart={() => setStarted(true)} />
-      ) : (
+      {started ? (
         <GroceryListApp />
+      ) : (
+        <Introduction onStart={() => setStarted(true)} />
       )}
     </div>
   );
