@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
+import axios from 'axios';
 import GroceryList from './GroceryList';
 import DoneList from './DoneList';
 
@@ -10,26 +11,39 @@ const GroceryListApp = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [photos, setPhotos] = useState([]);
 
+  
+  const saveItemToDatabase = (name, description) => {
+    const apiUrl = 'http://localhost:8085/items';
+
+  
+    const data = {
+      name,
+      description,
+    };
+
+  
+    axios.post(apiUrl, data)
+      .then((response) => {
+        console.log('Item saved to the database:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error saving item to the database:', error);
+      });
+  };
+
   const handleAddItem = () => {
     if (editIndex !== null) {
-      groceries[editIndex] = {
-        name: currentItem,
-        description: currentDescription,
-        photo: photos[editIndex] || null,
-      };
-      setEditIndex(null);
-      setPhotos((prevPhotos) => {
-        const updatedPhotos = [...prevPhotos];
-        updatedPhotos[editIndex] = null;
-        return updatedPhotos;
-      });
     } else {
       setGroceries([...groceries, { name: currentItem, description: currentDescription, photo: null }]);
       setPhotos([...photos, null]);
+
+
+      saveItemToDatabase(currentItem, currentDescription);
+
+      setCurrentItem('');
+      setCurrentDescription('');
     }
-    setCurrentItem('');
-    setCurrentDescription('');
-  };
+  }
 
   const handleMarkDone = (index) => {
     const doneItem = groceries[index];
@@ -106,3 +120,37 @@ const GroceryListApp = () => {
 };
 
 export default GroceryListApp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
