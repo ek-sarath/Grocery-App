@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import GroceryList from './GroceryList';
 import DoneList from './DoneList';
@@ -11,17 +11,16 @@ const GroceryListApp = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [photos, setPhotos] = useState([]);
 
-  
+
   const saveItemToDatabase = (name, description) => {
     const apiUrl = 'http://localhost:8085/items';
 
-  
     const data = {
       name,
       description,
     };
 
-  
+    
     axios.post(apiUrl, data)
       .then((response) => {
         console.log('Item saved to the database:', response.data);
@@ -31,12 +30,29 @@ const GroceryListApp = () => {
       });
   };
 
+  const fetchGroceriesFromDatabase = () => {
+    const apiUrl = 'http://localhost:8085/items';
+
+    axios.get(apiUrl)
+      .then((response) => {
+        setGroceries(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data from the database:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchGroceriesFromDatabase();
+  }, []);
+
+
+
   const handleAddItem = () => {
     if (editIndex !== null) {
     } else {
       setGroceries([...groceries, { name: currentItem, description: currentDescription, photo: null }]);
       setPhotos([...photos, null]);
-
 
       saveItemToDatabase(currentItem, currentDescription);
 
@@ -120,37 +136,3 @@ const GroceryListApp = () => {
 };
 
 export default GroceryListApp;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
