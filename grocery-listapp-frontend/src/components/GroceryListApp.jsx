@@ -44,7 +44,7 @@ const GroceryListApp = () => {
 
   useEffect(() => {
     fetchGroceriesFromDatabase();
-  }, []);
+  }, [groceries]);
 
 
 

@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Check from "../assets/checkList.svg";
+import DeleteItem from './DeleteItemApi';
 
-const GroceryList = ({ items, onMarkDone, onEdit, onDelete, onPhotoUpload, editIndex }) => {
+const GroceryList = ({ items, onMarkDone, onEdit, onPhotoUpload, editIndex }) => {
+  const [deletedItems, setDeletedItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+
+  useEffect(() => {
+    const updatedFilteredItems = items.filter((item, index) => !deletedItems.includes(index));
+    setFilteredItems(updatedFilteredItems);
+  }, [deletedItems, items]);
+
+  const handleDelete = (id) => {
+    setDeletedItems([...deletedItems, id]);
+  };
+
   return (
     <div>
       <div className='CheckListss'>
@@ -9,7 +22,7 @@ const GroceryList = ({ items, onMarkDone, onEdit, onDelete, onPhotoUpload, editI
         <h2>Grocery List</h2>
       </div>
       <ul>
-        {items.map((item, index) => (
+        {filteredItems.map((item, index) => (
           <li key={index} className="Kblee">
             <input
               className="Vblee"
@@ -31,9 +44,7 @@ const GroceryList = ({ items, onMarkDone, onEdit, onDelete, onPhotoUpload, editI
                 <button className='EditButton' onClick={() => onEdit(index)}>
                   Edit
                 </button>
-                <button className='DeleteButton' onClick={() => onDelete(index)}>
-                  Delete
-                </button>
+                <DeleteItem id={item.id} onDelete={handleDelete} />
               </>
             )}
           </li>
