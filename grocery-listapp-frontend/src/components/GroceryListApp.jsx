@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import GroceryList from './GroceryList';
 import DoneList from './DoneList';
@@ -11,22 +11,35 @@ const GroceryListApp = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [photos, setPhotos] = useState([]);
 
-
   const saveItemToDatabase = (name, description) => {
     const apiUrl = 'http://localhost:8085/items';
-
     const data = {
       name,
       description,
     };
 
-    
     axios.post(apiUrl, data)
       .then((response) => {
         console.log('Item saved to the database:', response.data);
       })
       .catch((error) => {
         console.error('Error saving item to the database:', error);
+      });
+  };
+
+  const updateItemInDatabase = (id, updatedName, updatedDescription) => {
+    const apiUrl = `http://localhost:8085/items/${id}`;
+    const data = {
+      name: updatedName,
+      description: updatedDescription,
+    };
+
+    axios.put(apiUrl, data)
+      .then(() => {
+        console.log(`Item with ID ${id} updated successfully.`);
+      })
+      .catch((error) => {
+        console.error(`Error updating item with ID ${id}:`, error);
       });
   };
 
@@ -46,20 +59,27 @@ const GroceryListApp = () => {
     fetchGroceriesFromDatabase();
   }, [groceries]);
 
-
-
   const handleAddItem = () => {
     if (editIndex !== null) {
+      // Handle the case when editing an item
+      const editedItem = groceries[editIndex];
+      updateItemInDatabase(editedItem.id, currentItem, currentDescription);
+      setEditIndex(null);
     } else {
+      // Handle the case when adding a new item
       setGroceries([...groceries, { name: currentItem, description: currentDescription, photo: null }]);
       setPhotos([...photos, null]);
-
       saveItemToDatabase(currentItem, currentDescription);
-
-      setCurrentItem('');
-      setCurrentDescription('');
     }
-  }
+
+    setCurrentItem('');
+    setCurrentDescription('');
+  };
+
+
+  const UpdateItem = ({ }) => {
+  };
+  
 
   const handleMarkDone = (index) => {
     const doneItem = groceries[index];
@@ -131,6 +151,15 @@ const GroceryListApp = () => {
           <DoneList items={doneItems} />
         </div>
       </div>
+
+
+      {editIndex !== null && (
+        <UpdateItem
+          id={groceries[editIndex].id}
+          onUpdate={updateItemInDatabase}
+          onCancel={() => setEditIndex(null)}
+        />
+      )}
     </div>
   );
 };
