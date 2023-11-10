@@ -61,12 +61,10 @@ const GroceryListApp = () => {
 
   const handleAddItem = () => {
     if (editIndex !== null) {
-      // Handle the case when editing an item
       const editedItem = groceries[editIndex];
       updateItemInDatabase(editedItem.id, currentItem, currentDescription);
       setEditIndex(null);
     } else {
-      // Handle the case when adding a new item
       setGroceries([...groceries, { name: currentItem, description: currentDescription, photo: null }]);
       setPhotos([...photos, null]);
       saveItemToDatabase(currentItem, currentDescription);
