@@ -15,3 +15,4 @@ const Introduction = ({onStart}) => {
 };
 
 export default Introduction;
+
